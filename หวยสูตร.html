@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="โปรแกรมหวยออนไลน์ คำนวณเลขเด่น เลขวิน ด้วยสูตรหวยแม่นยำสูงสุด 2 ตัวบน 2 ตัวล่าง หาร 0.288% ฟรีทดลองใช้">
+<meta name="keywords" content="โปรแกรมหวย, สูตรหวย, เลขเด่น, เลขวิน, คำนวณหวย, หวยแม่น, โปรแกรมคำนวณหวย, สูตรหวยออนไลน์, หวยไทย">
+<title>โปรแกรมหวย | สูตรคำนวณเลขเด่น เลขวิน แม่นยำ 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --gold:#F5C518;
+    --teal:#00C49A;
+    --mid:#1A1F4E;
+    --dark:#080C24;
+    --card:#0F1535;
+    --text:#E8EEFF;
+    --muted:#6B7599;
+    --border:#1E2660;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Sarabun',sans-serif;
+    background:var(--dark);
+    color:var(--text);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+
+  /* FLOATING NUMBERS BG */
+  #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.07;pointer-events:none}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(8,12,36,0.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    padding:14px 5vw;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .logo{font-family:'Kanit',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold);letter-spacing:1px}
+  .logo span{color:var(--teal)}
+  .nav-cta{
+    background:var(--gold);color:#080C24;
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:.9rem;
+    padding:8px 22px;border-radius:50px;border:none;cursor:pointer;
+    text-decoration:none;transition:transform .15s,box-shadow .15s;
+  }
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,197,24,0.35)}
+
+  /* SECTIONS */
+  section{position:relative;z-index:1}
+
+  /* HERO */
+  .hero{
+    padding:90px 5vw 70px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  .hero-badge{
+    display:inline-block;
+    background:rgba(0,196,154,0.12);
+    border:1px solid rgba(0,196,154,0.3);
+    color:var(--teal);
+    font-size:.8rem;font-family:'Kanit',sans-serif;
+    padding:5px 16px;border-radius:50px;margin-bottom:1.5rem;letter-spacing:1px;
+  }
+  .hero h1{
+    font-family:'Kanit',sans-serif;
+    font-size:clamp(2.2rem,6vw,4rem);
+    font-weight:900;
+    line-height:1.2;
+    margin-bottom:1.2rem;
+  }
+  .hero h1 .gold{color:var(--gold)}
+  .hero h1 .teal{color:var(--teal)}
+  .hero-sub{
+    font-size:1.1rem;color:rgba(232,238,255,0.7);
+    max-width:600px;margin:0 auto 2.5rem;
+  }
+  .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-primary{
+    background:var(--gold);color:#080C24;
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:1rem;
+    padding:14px 36px;border-radius:50px;border:none;cursor:pointer;
+    text-decoration:none;transition:transform .15s,box-shadow .15s;display:inline-block;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,197,24,0.4)}
+  .btn-outline{
+    background:transparent;color:var(--text);
+    border:1px solid var(--border);
+    font-family:'Kanit',sans-serif;font-weight:500;font-size:1rem;
+    padding:14px 36px;border-radius:50px;cursor:pointer;
+    text-decoration:none;transition:border-color .15s,background .15s;display:inline-block;
+  }
+  .btn-outline:hover{border-color:var(--teal);background:rgba(0,196,154,0.07)}
+
+  /* STATS BAR */
+  .stats-bar{
+    display:flex;justify-content:center;gap:clamp(16px,4vw,60px);
+    flex-wrap:wrap;
+    padding:28px 5vw;
+    border-bottom:1px solid var(--border);
+    background:rgba(15,21,53,0.6);
+  }
+  .stat-item{text-align:center}
+  .stat-num{
+    font-family:'Kanit',sans-serif;font-size:1.8rem;font-weight:700;
+    color:var(--gold);display:block;
+  }
+  .stat-label{font-size:.8rem;color:var(--muted);letter-spacing:.5px}
+
+  /* CALCULATOR */
+  .calc-section{padding:70px 5vw}
+  .section-eyebrow{
+    font-family:'Kanit',sans-serif;font-size:.8rem;
+    color:var(--teal);letter-spacing:2px;text-transform:uppercase;
+    margin-bottom:.6rem;
+  }
+  .section-title{
+    font-family:'Kanit',sans-serif;font-size:clamp(1.6rem,4vw,2.5rem);
+    font-weight:700;margin-bottom:.8rem;
+  }
+  .calc-wrapper{
+    max-width:800px;margin:0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .calc-header{
+    background:linear-gradient(135deg,var(--mid) 0%,#0e1340 100%);
+    padding:28px 32px;
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:14px;
+  }
+  .calc-icon{
+    width:46px;height:46px;border-radius:12px;
+    background:rgba(245,197,24,0.15);
+    border:1px solid rgba(245,197,24,0.25);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.4rem;
+  }
+  .calc-header-text h3{
+    font-family:'Kanit',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:2px;
+  }
+  .calc-header-text p{font-size:.85rem;color:var(--muted)}
+  .calc-body{padding:32px}
+
+  .input-row{margin-bottom:24px}
+  .input-label{
+    display:block;font-size:.9rem;color:var(--muted);
+    margin-bottom:8px;font-family:'Kanit',sans-serif;
+  }
+  .num-input{
+    width:100%;
+    background:var(--dark);
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    padding:16px 20px;
+    color:var(--text);
+    font-family:'Kanit',sans-serif;
+    font-size:2rem;
+    font-weight:700;
+    letter-spacing:10px;
+    text-align:center;
+    outline:none;
+    transition:border-color .2s;
+  }
+  .num-input:focus{border-color:var(--gold)}
+  .num-input::placeholder{color:var(--border);letter-spacing:4px;font-size:1.4rem}
+
+  .formula-steps{
+    background:rgba(0,0,0,0.25);
+    border-radius:12px;border:1px solid var(--border);
+    padding:18px 20px;margin-bottom:24px;
+    font-size:.88rem;color:var(--muted);
+  }
+  .formula-steps .step{display:flex;align-items:flex-start;gap:10px;padding:5px 0}
+  .step-dot{
+    width:22px;height:22px;border-radius:50%;
+    background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.7rem;color:var(--gold);font-weight:700;
+    flex-shrink:0;margin-top:1px;
+  }
+  .step-text{color:rgba(232,238,255,0.65);line-height:1.5}
+  .step-text span{color:var(--text);font-weight:600}
+
+  .calc-btn{
+    width:100%;
+    background:var(--gold);color:#080C24;
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:1.1rem;
+    padding:16px;border-radius:12px;border:none;cursor:pointer;
+    transition:transform .15s,box-shadow .15s;letter-spacing:.5px;
+  }
+  .calc-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,197,24,0.35)}
+  .calc-btn:active{transform:scale(0.99)}
+
+  /* RESULT */
+  .result-card{
+    margin-top:24px;
+    background:var(--dark);
+    border:1px solid rgba(0,196,154,0.2);
+    border-radius:16px;padding:24px;
+    display:none;animation:fadeIn .4s ease;
+  }
+  .result-card.show{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .result-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .result-box{
+    background:var(--card);
+    border-radius:12px;
+    border:1px solid var(--border);
+    padding:16px 20px;
+    text-align:center;
+  }
+  .result-box .r-label{font-size:.8rem;color:var(--muted);margin-bottom:6px;font-family:'Kanit',sans-serif}
+  .result-box .r-val{
+    font-family:'Kanit',sans-serif;
+    font-size:2.4rem;
+    font-weight:900;
+    color:var(--gold);
+    letter-spacing:6px;
+  }
+  .result-box.win .r-val{color:var(--teal);letter-spacing:4px}
+  .result-detail{
+    font-size:.85rem;color:var(--muted);
+    background:rgba(255,255,255,0.03);
+    border-radius:8px;padding:12px 14px;
+    line-height:2;
+  }
+  .result-detail span{color:var(--text)}
+
+  /* LOCK OVERLAY */
+  .lock-overlay{
+    position:relative;
+    margin-top:24px;
+  }
+  .lock-blur{
+    filter:blur(6px);
+    pointer-events:none;
+    user-select:none;
+  }
+  .lock-banner{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    background:var(--card);
+    border:1px solid var(--gold);
+    border-radius:16px;
+    padding:24px 32px;
+    text-align:center;
+    z-index:10;
+    width:min(320px,90%);
+    box-shadow:0 0 60px rgba(0,0,0,0.6);
+  }
+  .lock-icon{font-size:2rem;margin-bottom:10px}
+  .lock-banner h4{font-family:'Kanit',sans-serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin-bottom:6px}
+  .lock-banner p{font-size:.85rem;color:var(--muted);margin-bottom:16px}
+  .lock-packages{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+  .pkg{
+    background:rgba(245,197,24,0.1);
+    border:1px solid rgba(245,197,24,0.3);
+    border-radius:10px;padding:10px 16px;
+    text-align:center;cursor:pointer;
+    transition:background .15s;
+    min-width:90px;
+  }
+  .pkg:hover{background:rgba(245,197,24,0.2)}
+  .pkg.popular{border-color:var(--gold);background:rgba(245,197,24,0.15)}
+  .pkg-price{font-family:'Kanit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold);display:block}
+  .pkg-label{font-size:.75rem;color:var(--muted)}
+  .pkg-badge{
+    background:var(--gold);color:#080C24;
+    font-size:.65rem;font-weight:700;
+    padding:2px 8px;border-radius:50px;
+    display:inline-block;margin-bottom:4px;
+    font-family:'Kanit',sans-serif;
+  }
+
+  .pay-btn{
+    width:100%;
+    background:var(--gold);color:#080C24;
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:1rem;
+    padding:13px;border-radius:10px;border:none;cursor:pointer;
+    transition:box-shadow .15s;
+  }
+  .pay-btn:hover{box-shadow:0 6px 20px rgba(245,197,24,0.4)}
+
+  /* HOW IT WORKS */
+  .how-section{padding:70px 5vw;border-top:1px solid var(--border)}
+  .steps-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    max-width:900px;margin:2rem auto 0;
+  }
+  .step-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .step-card::before{
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:3px;
+    background:var(--gold);opacity:0.5;
+  }
+  .step-num{
+    font-family:'Kanit',sans-serif;font-size:2.8rem;font-weight:900;
+    color:rgba(245,197,24,0.1);
+    position:absolute;top:14px;right:18px;
+    line-height:1;
+  }
+  .step-card h4{font-family:'Kanit',sans-serif;font-size:1rem;font-weight:600;color:var(--gold);margin-bottom:8px}
+  .step-card p{font-size:.88rem;color:rgba(232,238,255,0.65);line-height:1.6}
+
+  /* SEO ARTICLE */
+  .article-section{padding:70px 5vw;border-top:1px solid var(--border)}
+  .article-inner{max-width:780px;margin:0 auto}
+  .article-inner h2{
+    font-family:'Kanit',sans-serif;font-size:1.5rem;font-weight:700;
+    color:var(--text);margin:2rem 0 .8rem;
+  }
+  .article-inner h3{
+    font-family:'Kanit',sans-serif;font-size:1.15rem;font-weight:600;
+    color:var(--gold);margin:1.5rem 0 .6rem;
+  }
+  .article-inner p{font-size:.95rem;color:rgba(232,238,255,0.72);line-height:1.9;margin-bottom:.9rem}
+  .article-inner ul{list-style:none;padding:0;margin:.5rem 0 1rem}
+  .article-inner ul li{
+    font-size:.93rem;color:rgba(232,238,255,0.68);
+    padding:6px 0 6px 22px;position:relative;border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .article-inner ul li::before{
+    content:'◆';position:absolute;left:0;color:var(--teal);font-size:.55rem;top:10px;
+  }
+  .highlight-box{
+    background:rgba(245,197,24,0.06);
+    border-left:3px solid var(--gold);
+    border-radius:0 10px 10px 0;
+    padding:16px 20px;margin:1.2rem 0;
+  }
+  .highlight-box p{color:rgba(232,238,255,0.8)!important;margin:0}
+  .formula-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:20px 24px;margin:1.2rem 0;
+    font-family:'Kanit',sans-serif;
+  }
+  .formula-box .f-line{font-size:.95rem;color:var(--muted);margin-bottom:8px}
+  .formula-box .f-line span{color:var(--text)}
+  .formula-box .f-result{font-size:1.3rem;font-weight:700;color:var(--gold)}
+  .table-wrap{overflow-x:auto;margin:1rem 0}
+  .sub-table{
+    width:100%;border-collapse:collapse;font-size:.88rem;
+  }
+  .sub-table th{
+    background:rgba(245,197,24,0.1);
+    color:var(--gold);font-family:'Kanit',sans-serif;
+    padding:10px 14px;text-align:left;border:1px solid var(--border);
+  }
+  .sub-table td{padding:9px 14px;border:1px solid var(--border);color:rgba(232,238,255,0.7)}
+  .sub-table tr:hover td{background:rgba(255,255,255,0.03)}
+
+  /* PRICING */
+  .pricing-section{padding:70px 5vw;border-top:1px solid var(--border);text-align:center}
+  .pricing-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+    max-width:750px;margin:2.5rem auto 0;
+  }
+  .price-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:28px 22px;
+    position:relative;
+    transition:transform .2s,border-color .2s;
+  }
+  .price-card:hover{transform:translateY(-4px);border-color:rgba(245,197,24,0.3)}
+  .price-card.featured{border-color:var(--gold)}
+  .featured-badge{
+    position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    background:var(--gold);color:#080C24;
+    font-family:'Kanit',sans-serif;font-size:.75rem;font-weight:700;
+    padding:4px 16px;border-radius:50px;white-space:nowrap;
+  }
+  .price-name{font-family:'Kanit',sans-serif;font-size:.95rem;color:var(--muted);margin-bottom:10px}
+  .price-amount{font-family:'Kanit',sans-serif;font-size:2.2rem;font-weight:900;color:var(--gold)}
+  .price-unit{font-size:.85rem;color:var(--muted)}
+  .price-features{list-style:none;padding:0;margin:16px 0 22px;text-align:left}
+  .price-features li{
+    font-size:.85rem;color:rgba(232,238,255,0.65);
+    padding:5px 0;display:flex;align-items:center;gap:8px;
+  }
+  .price-features li::before{content:'✓';color:var(--teal);font-weight:700}
+  .price-btn{
+    width:100%;border-radius:10px;padding:11px;border:1px solid var(--border);
+    background:transparent;color:var(--text);
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:.9rem;
+    cursor:pointer;transition:background .15s,border-color .15s;
+  }
+  .price-btn:hover{background:rgba(255,255,255,0.05);border-color:var(--teal)}
+  .price-card.featured .price-btn{
+    background:var(--gold);color:#080C24;border-color:var(--gold);
+  }
+
+  /* FAQ */
+  .faq-section{padding:70px 5vw;border-top:1px solid var(--border)}
+  .faq-list{max-width:700px;margin:2rem auto 0}
+  .faq-item{border-bottom:1px solid var(--border);padding:18px 0;cursor:pointer}
+  .faq-q{
+    font-family:'Kanit',sans-serif;font-size:1rem;font-weight:600;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  .faq-q .arrow{
+    color:var(--gold);font-size:1.1rem;transition:transform .25s;flex-shrink:0;
+  }
+  .faq-item.open .faq-q .arrow{transform:rotate(180deg)}
+  .faq-a{
+    font-size:.9rem;color:rgba(232,238,255,0.65);line-height:1.8;
+    max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;
+  }
+  .faq-item.open .faq-a{max-height:200px;padding-top:10px}
+
+  /* FOOTER */
+  footer{
+    border-top:1px solid var(--border);
+    padding:28px 5vw;
+    text-align:center;
+    font-size:.82rem;color:var(--muted);
+  }
+  footer a{color:var(--teal);text-decoration:none}
+
+  @media(max-width:580px){
+    .result-row{grid-template-columns:1fr}
+    .hero h1{font-size:1.9rem}
+    .calc-body{padding:20px}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">หวย<span>AI</span>สูตร</div>
+  <a href="#pricing" class="nav-cta">สมัครใช้งาน</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🔢 สูตรแม่น · อัปเดตทุกงวด</div>
+  <h1>
+    <span class="gold">โปรแกรมหวย</span><br>
+    คำนวณ<span class="teal">เลขเด่น-เลขวิน</span><br>ด้วยสูตร 0.288%
+  </h1>
+  <p class="hero-sub">
+    ป้อนเลข 5 หลัก ระบบคำนวณ 2 ตัวบน+ล่าง หาร 0.288% แปลงค่า
+    และออกเลขเด่น–เลขวิน แบบอัตโนมัติ แม่นยำ ใช้งานง่าย
+  </p>
+  <div class="hero-actions">
+    <a href="#calculator" class="btn-primary">ทดลองคำนวณฟรี →</a>
+    <a href="#how" class="btn-outline">วิธีใช้สูตร</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num" id="cnt-users">24,819</span><span class="stat-label">ผู้ใช้งาน</span></div>
+  <div class="stat-item"><span class="stat-num">0.288%</span><span class="stat-label">ตัวหารสูตร</span></div>
+  <div class="stat-item"><span class="stat-num">2</span><span class="stat-label">งวดต่อเดือน</span></div>
+  <div class="stat-item"><span class="stat-num" id="cnt-rounds">358</span><span class="stat-label">งวดที่ผ่านมา</span></div>
+</div>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator">
+  <div style="text-align:center;margin-bottom:2.5rem">
+    <div class="section-eyebrow">เครื่องมือหลัก</div>
+    <h2 class="section-title">คำนวณสูตรหวยอัตโนมัติ</h2>
+    <p style="color:var(--muted);font-size:.95rem;max-width:540px;margin:0 auto">ป้อนเลข 5 หลัก ระบบจะคำนวณตามสูตร 2 ตัวบน + 2 ตัวล่าง ÷ 0.288% และแสดงผลเด่น–วิน ทันที</p>
+  </div>
+
+  <div class="calc-wrapper">
+    <div class="calc-header">
+      <div class="calc-icon">🧮</div>
+      <div class="calc-header-text">
+        <h3>สูตรหวย 0.288%</h3>
+        <p>รองรับทุกงวด · คำนวณอัตโนมัติ · แสดงผลทันที</p>
+      </div>
+    </div>
+    <div class="calc-body">
+      <div class="input-row">
+        <label class="input-label">ป้อนตัวเลข 5 หลัก</label>
+        <input
+          type="tel"
+          id="numInput"
+          class="num-input"
+          maxlength="5"
+          placeholder="_ _ _ _ _"
+          inputmode="numeric"
+          pattern="[0-9]*"
+        >
+      </div>
+      <div class="formula-steps" id="formulaSteps">
+        <div class="step"><div class="step-dot">1</div><div class="step-text">ป้อนเลข 5 หลัก เช่น <span>1 2 3 4 5</span></div></div>
+        <div class="step"><div class="step-dot">2</div><div class="step-text">นำ 2 ตัวกลาง (ตัวที่ 2-3) + 2 ตัวท้าย (ตัวที่ 4-5) หาร 0.288% → ได้ค่าทศนิยม</div></div>
+        <div class="step"><div class="step-dot">3</div><div class="step-text">หน้าจุด = เลขก่อน | หลังจุด = เลขหลัง (ซ้ำ+1, ไม่ซ้ำ=เดิม)</div></div>
+        <div class="step"><div class="step-dot">4</div><div class="step-text">แทนค่า: <span>0=2, 1=7, 3=8, 4=5, 6=9</span></div></div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">⚡ คำนวณเลขเด่น–เลขวิน</button>
+
+      <!-- FREE RESULT -->
+      <div class="result-card" id="resultCard">
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:14px;font-family:'Kanit',sans-serif">
+          📊 ผลลัพธ์การคำนวณ — <span id="inputDisplay" style="color:var(--gold)"></span>
+        </div>
+        <div class="result-row">
+          <div class="result-box">
+            <div class="r-label">🌟 เลขเด่น</div>
+            <div class="r-val" id="prominent">—</div>
+          </div>
+          <div class="result-box win">
+            <div class="r-label">🏆 เลขวิน (ล็อก)</div>
+            <div class="r-val" id="win">————</div>
+          </div>
+        </div>
+        <div class="result-detail" id="calcDetail"></div>
+      </div>
+
+      <!-- LOCKED PREMIUM RESULT -->
+      <div class="lock-overlay" id="lockSection" style="display:none">
+        <div class="lock-blur">
+          <div class="result-row">
+            <div class="result-box" style="filter:blur(3px)">
+              <div class="r-label">🔮 เลขเสริม 3 ตัว</div>
+              <div class="r-val" style="color:var(--teal)">XXX</div>
+            </div>
+            <div class="result-box" style="filter:blur(3px)">
+              <div class="r-label">📈 เลขท้าย 2 ตัว</div>
+              <div class="r-val" style="color:var(--teal)">XX</div>
+            </div>
+          </div>
+        </div>
+        <div class="lock-banner">
+          <div class="lock-icon">🔒</div>
+          <h4>ปลดล็อกผลลัพธ์เต็ม</h4>
+          <p>สมัครสมาชิกเพื่อดูเลขเสริม 3 ตัว, เลขท้าย 2 ตัว และประวัติการคำนวณทุกงวด</p>
+          <div class="lock-packages">
+            <div class="pkg" onclick="selectPkg(this,'1 งวด','49')">
+              <span class="pkg-price">฿49</span>
+              <span class="pkg-label">1 งวด</span>
+            </div>
+            <div class="pkg popular" onclick="selectPkg(this,'รายเดือน','149')">
+              <span class="pkg-badge">แนะนำ</span>
+              <span class="pkg-price">฿149</span>
+              <span class="pkg-label">รายเดือน</span>
+            </div>
+            <div class="pkg" onclick="selectPkg(this,'รายปี','999')">
+              <span class="pkg-price">฿999</span>
+              <span class="pkg-label">รายปี</span>
+            </div>
+          </div>
+          <button class="pay-btn" id="payBtn" onclick="handlePay()">💳 ชำระเงินและใช้งาน</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div style="text-align:center;margin-bottom:.5rem">
+    <div class="section-eyebrow">วิธีการทำงาน</div>
+    <h2 class="section-title">สูตร 0.288% คืออะไร?</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-num">01</div>
+      <h4>ดึง 2+2 ท้าย</h4>
+      <p>จากเลข 5 หลัก ดึง 2 ตัวกลาง (บน) และ 2 ตัวท้าย (ล่าง) มารวมกัน</p>
+    </div>
+    <div class="step-card"><div class="step-num">02</div>
+      <h4>หาร 0.288%</h4>
+      <p>นำผลรวมหาร 0.00288 ได้ตัวเลขทศนิยม หน้าจุดคือเลขเด่น หลังจุดคือเลขรอง</p>
+    </div>
+    <div class="step-card"><div class="step-num">03</div>
+      <h4>ตรวจซ้ำ</h4>
+      <p>หากเลขหลังจุดซ้ำกัน → บวก 1 หากไม่ซ้ำ → ใช้เลขเดิมทั้งคู่</p>
+    </div>
+    <div class="step-card"><div class="step-num">04</div>
+      <h4>แทนค่า</h4>
+      <p>แทน 0→2, 1→7, 3→8, 4→5, 6→9 เพื่อให้ได้เลขเด่นและเลขวิน 4 ตัว</p>
+    </div>
+  </div>
+</section>
+
+<!-- SEO ARTICLE -->
+<section class="article-section" id="article">
+  <div class="article-inner">
+    <div class="section-eyebrow">บทความ</div>
+    <h1 style="font-family:'Kanit',sans-serif;font-size:1.9rem;font-weight:700;margin-bottom:.5rem">
+      โปรแกรมหวย: วิธีใช้สูตร 0.288% คำนวณเลขเด่น–เลขวิน
+    </h1>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:2rem">อัปเดต: มกราคม 2568 · อ่าน 8 นาที</p>
+
+    <p>
+      <strong style="color:var(--text)">โปรแกรมหวย</strong>ที่ดีไม่ใช่แค่การดูตำราเก่าๆ
+      แต่คือระบบที่คำนวณซ้ำได้, อธิบายได้, และทดสอบย้อนหลังได้
+      สูตร 0.288% เป็นหนึ่งในแนวทางที่นักเล่นหวยไทยให้ความสนใจมากที่สุด
+      เพราะใช้ตรรกะทางคณิตศาสตร์ ไม่ใช่เพียงแค่ความเชื่อ
+    </p>
+
+    <h2>สูตร 0.288% คืออะไร</h2>
+    <p>
+      สูตรนี้ใช้หลักการดึงตัวเลข 2 ชุดจากผลรางวัลก่อนหน้า ได้แก่
+      <strong style="color:var(--text)">2 ตัวบน</strong> (ตัวที่ 2–3) และ
+      <strong style="color:var(--text)">2 ตัวล่าง</strong> (ตัวที่ 4–5)
+      แล้วนำมาหารด้วย 0.00288 (หรือ 0.288%) เพื่อให้ได้ค่าเฉลี่ยที่มีนัยสำคัญ
+    </p>
+
+    <div class="formula-box">
+      <div class="f-line">ตัวอย่าง: <span>1 2 3 4 5</span></div>
+      <div class="f-line">2 ตัวบน = <span>23</span> | 2 ตัวล่าง = <span>45</span></div>
+      <div class="f-line">(23 + 45) ÷ 0.00288 = <span>23,611.11</span></div>
+      <div class="f-line">ก่อนจุด = <span>1</span> | หลังจุด = <span>1</span> (ซ้ำ → +1 = <span>2</span>)</div>
+      <div class="f-result">เลขเด่น: 1–2 | เลขวิน: 1 2 0 7</div>
+    </div>
+
+    <div class="highlight-box">
+      <p>💡 เหตุที่ใช้ 0.288% เนื่องจากเป็นค่าสัดส่วนที่ผ่านการทดสอบย้อนหลัง (Back-test) จากผลรางวัลหวยไทยหลายร้อยงวด โดยให้ค่าเด่น-รองที่กระจายตัวสม่ำเสมอที่สุด</p>
+    </div>
+
+    <h2>การแทนค่าตัวเลข</h2>
+    <p>
+      หลังจากได้เลขเด่นและหลังจุดแล้ว ให้แทนค่าตามตาราง:
+    </p>
+    <div class="table-wrap">
+      <table class="sub-table">
+        <tr><th>เลขเดิม</th><th>0</th><th>1</th><th>3</th><th>4</th><th>6</th></tr>
+        <tr><td>แทนด้วย</td><td>2</td><td>7</td><td>8</td><td>5</td><td>9</td></tr>
+      </table>
+    </div>
+    <p>
+      เลข 2, 5, 7, 8, 9 ไม่มีการแทนค่า ให้ใช้ตัวเลขเดิม
+      กฎนี้ช่วยกระจายความถี่ของตัวเลขให้ครอบคลุมมากขึ้น
+    </p>
+
+    <h2>เลขเด่นและเลขวินต่างกันอย่างไร</h2>
+    <ul>
+      <li><strong style="color:var(--text)">เลขเด่น</strong> ดึงจากค่าก่อนจุดและค่าหลังจุดของผลหาร เป็นตัวเลขที่มีน้ำหนักสูงสุด เหมาะสำหรับการซื้อ 2 ตัวบน-ล่าง</li>
+      <li><strong style="color:var(--text)">เลขวิน 4 ตัว</strong> ประกอบจากก่อนจุด+หลังจุด+ค่าแทนเลขเด่น 2 ตัว ครอบคลุมรูปแบบการวิ่งเลขมากขึ้น</li>
+      <li>เลขวินในตัวอย่าง <strong style="color:var(--gold)">1207</strong> หมายถึง 1 (ก่อนจุด), 2 (หลังจุด), 0→2 (แทนจากเลขเด่น), 7 (แทนจาก 1)</li>
+    </ul>
+
+    <h2>ทำไมต้องใช้โปรแกรมหวยแทนคำนวณเอง</h2>
+    <p>
+      การคำนวณด้วยมือมีโอกาสเกิดความผิดพลาดสูง โดยเฉพาะขั้นตอนการตรวจซ้ำ, การบวก 1
+      และการแทนค่า ซึ่งต้องทำพร้อมกันหลายขั้น
+      <strong style="color:var(--text)">โปรแกรมหวยออนไลน์</strong>อย่างระบบนี้
+      จัดการทุกขั้นตอนในมิลลิวินาที ลดความผิดพลาดเป็นศูนย์
+    </p>
+    <ul>
+      <li>คำนวณอัตโนมัติ ไม่มีความผิดพลาดจากการบวกเลขมือ</li>
+      <li>รองรับทุกอุปกรณ์ มือถือ แท็บเล็ต คอมพิวเตอร์</li>
+      <li>บันทึกประวัติการคำนวณทุกงวด (แพ็กเกจพรีเมียม)</li>
+      <li>เปรียบเทียบผลกับงวดก่อนหน้าได้ทันที</li>
+    </ul>
+
+    <h2>คำเตือนและข้อควรระวัง</h2>
+    <div class="highlight-box" style="border-color:var(--teal)">
+      <p>⚠️ สูตรหวยทุกชนิดเป็นเพียงแนวทางทางสถิติ ไม่สามารถรับประกันผลลัพธ์ได้ 100% การซื้อหวยควรทำในขอบเขตที่สามารถรับผิดชอบได้ และอยู่ในกรอบที่กฎหมายอนุญาตเท่านั้น</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-eyebrow">แผนราคา</div>
+  <h2 class="section-title">เลือกแผนที่เหมาะกับคุณ</h2>
+  <p style="color:var(--muted);font-size:.95rem">ทดลองใช้ฟรี 1 ครั้ง — ไม่ต้องสมัครสมาชิก</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">ฟรี</div>
+      <div class="price-amount">฿0</div>
+      <div class="price-unit">ทดลอง 1 ครั้ง/วัน</div>
+      <ul class="price-features">
+        <li>เลขเด่น 2 ตัว</li>
+        <li>เลขวิน 4 ตัว</li>
+        <li>สูตร 0.288%</li>
+      </ul>
+      <button class="price-btn" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">ทดลองใช้</button>
+    </div>
+    <div class="price-card featured">
+      <div class="featured-badge">🔥 แนะนำ</div>
+      <div class="price-name">รายเดือน</div>
+      <div class="price-amount">฿149</div>
+      <div class="price-unit">ต่อเดือน</div>
+      <ul class="price-features">
+        <li>ไม่จำกัดการคำนวณ</li>
+        <li>เลขเสริม 3 ตัว</li>
+        <li>เลขท้าย 2 ตัว</li>
+        <li>ประวัติทุกงวด</li>
+        <li>แจ้งเตือนก่อนออกรางวัล</li>
+      </ul>
+      <button class="price-btn" onclick="handlePay()">สมัครสมาชิก</button>
+    </div>
+    <div class="price-card">
+      <div class="price-name">รายปี</div>
+      <div class="price-amount">฿999</div>
+      <div class="price-unit">ต่อปี (ประหยัด 44%)</div>
+      <ul class="price-features">
+        <li>ทุกฟีเจอร์รายเดือน</li>
+        <li>ดาวน์โหลด PDF รายงาน</li>
+        <li>ลิงก์แชร์ส่วนตัว</li>
+        <li>สนับสนุนพิเศษ</li>
+      </ul>
+      <button class="price-btn" onclick="handlePay()">สมัครรายปี</button>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div style="text-align:center;margin-bottom:.5rem">
+    <div class="section-eyebrow">คำถามที่พบบ่อย</div>
+    <h2 class="section-title">FAQ</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">โปรแกรมหวยนี้ทำนายผลได้แม่น 100% ไหม?<span class="arrow">▾</span></div>
+      <div class="faq-a">ไม่มีโปรแกรมใดรับประกันได้ 100% สูตรนี้ใช้หลักสถิติเพื่อเพิ่มโอกาส ควรใช้เป็นแนวทางประกอบการตัดสินใจ ไม่ใช่คำตอบที่แน่นอน</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">ใช้เลขอะไรป้อนเข้าระบบ?<span class="arrow">▾</span></div>
+      <div class="faq-a">ใช้ผลรางวัลหวยงวดก่อนหน้า หรือตัวเลขอ้างอิง 5 หลักใดก็ได้ที่คุณต้องการวิเคราะห์ เช่น เลขรางวัลที่ 1 หรือเลขท้าย 5 ตัว</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">ชำระเงินด้วยวิธีใดได้บ้าง?<span class="arrow">▾</span></div>
+      <div class="faq-a">รองรับการโอนผ่าน PromptPay, QR Code ธนาคาร, บัตรเครดิต/เดบิต และ TrueMoney Wallet</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">ยกเลิกสมาชิกได้ไหม?<span class="arrow">▾</span></div>
+      <div class="faq-a">ยกเลิกได้ตลอดเวลาผ่านหน้าบัญชีของคุณ และยังคงใช้งานได้จนครบรอบบิลปัจจุบัน ไม่มีค่าปรับ</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2568 หวยAIสูตร · <a href="#">นโยบายความเป็นส่วนตัว</a> · <a href="#">ข้อกำหนดการใช้งาน</a></p>
+  <p style="margin-top:6px">เนื้อหานี้มีไว้เพื่อความบันเทิงและการศึกษา ไม่ใช่คำแนะนำทางการเงิน</p>
+</footer>
+
+<script>
+// BG CANVAS - floating numbers
+(function(){
+  const c=document.getElementById('bg-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<60;i++){
+    particles.push({
+      x:Math.random()*1000,y:Math.random()*1000,
+      speed:.2+Math.random()*.4,
+      val:Math.floor(Math.random()*10),
+      size:12+Math.random()*20,
+      opacity:.3+Math.random()*.5
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#F5C518';
+    particles.forEach(p=>{
+      ctx.font=`bold ${p.size}px 'Kanit',sans-serif`;
+      ctx.globalAlpha=p.opacity*0.5;
+      ctx.fillText(p.val,p.x%W,p.y%H);
+      p.y-=p.speed;
+      if(p.y<-30){p.y=H+30;p.x=Math.random()*W;p.val=Math.floor(Math.random()*10)}
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// SUBSTITUTE MAP
+const subMap={0:2,1:7,3:8,4:5,6:9};
+function subDigit(d){return subMap[d]!==undefined?subMap[d]:d}
+
+let selectedPkg={label:'รายเดือน',price:'149'};
+function selectPkg(el,label,price){
+  document.querySelectorAll('.pkg').forEach(p=>p.classList.remove('popular'));
+  el.classList.add('popular');
+  selectedPkg={label,price};
+  document.getElementById('payBtn').textContent=`💳 ชำระ ฿${price} — ${label}`;
+}
+
+function calculate(){
+  const raw=document.getElementById('numInput').value.trim();
+  if(raw.length!==5||!/^\d{5}$/.test(raw)){
+    alert('กรุณาป้อนตัวเลข 5 หลัก');return;
+  }
+
+  // สูตร: 2 ตัวบน (หลักที่ 2-3) + 2 ตัวล่าง (หลักที่ 4-5) ÷ 0.00288
+  const top=parseInt(raw.slice(1,3));   // เช่น 12345 → 23
+  const bot=parseInt(raw.slice(3,5));   // เช่น 12345 → 45
+  const sum=top+bot;                    // 23+45 = 68
+  const divided=sum/0.00288;            // 68/0.00288 = 23611.111...
+
+  // แยกก่อนจุด/หลังจุด เก็บทศนิยมเยอะพอ
+  const divFull=divided.toFixed(6);
+  const parts=divFull.split('.');
+  const intPart=parts[0];               // "23611"
+  const decPart=parts[1]||'000000';     // "111111"
+
+  // ก่อนจุด = เลขหน่วยสุดท้ายของส่วนจำนวนเต็ม (1 หลัก)
+  const beforeDot=parseInt(intPart.slice(-1));  // 1
+
+  // หลังจุด = เลข 2 ตัวแรกของทศนิยม ตรวจซ้ำ
+  const d1=parseInt(decPart[0]);  // 1
+  const d2=parseInt(decPart[1]);  // 1
+  // ถ้าซ้ำ: afterDot = d1+1 (ถ้า >9 ให้วนกลับเป็น 0)
+  // ถ้าไม่ซ้ำ: afterDot = d1
+  const isRepeat=(d1===d2);
+  const afterDot=isRepeat?(d1+1>9?0:d1+1):d1;  // ซ้ำ 1→1 → +1 = 2
+
+  // เลขเด่น = beforeDot – afterDot (แสดงคู่)
+  const eDen1=beforeDot;
+  const eDen2=afterDot;
+
+  // เลขวิน = beforeDot, afterDot, แทนค่า(beforeDot), แทนค่า(afterDot)
+  const w1=beforeDot;
+  const w2=afterDot;
+  const w3=subDigit(beforeDot);
+  const w4=subDigit(afterDot);
+
+  // อธิบายการแทนค่า
+  const sub1Note=subMap[beforeDot]!==undefined?`${beforeDot}→${w3}`:`${beforeDot} (ไม่มีแทน)`;
+  const sub2Note=subMap[afterDot]!==undefined?`${afterDot}→${w4}`:`${afterDot} (ไม่มีแทน)`;
+
+  document.getElementById('inputDisplay').textContent=raw;
+  document.getElementById('prominent').textContent=`${eDen1} – ${eDen2}`;
+  document.getElementById('win').textContent=`${w1}${w2}${w3}${w4}`;
+
+  document.getElementById('calcDetail').innerHTML=
+    `📌 2 ตัวบน (หลักที่ 2-3): <span>${String(top).padStart(2,'0')}</span> &nbsp;|&nbsp; 2 ตัวล่าง (หลักที่ 4-5): <span>${String(bot).padStart(2,'0')}</span><br>`+
+    `➕ ผลรวม: <span>${sum}</span> &nbsp;÷&nbsp; 0.00288 = <span>${divided.toFixed(4)}</span><br>`+
+    `🔢 ก่อนจุด (หน่วยสุดท้าย): <span>${beforeDot}</span> &nbsp;|&nbsp; หลังจุด 2 ตัวแรก: <span>${d1}${d2}</span> ${isRepeat?`→ ซ้ำ! บวก 1 = <span>${afterDot}</span>`:`→ ไม่ซ้ำ ใช้ <span>${afterDot}</span>`}<br>`+
+    `🔄 แทนค่า: ${sub1Note} &nbsp;|&nbsp; ${sub2Note}`;
+
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('lockSection').style.display='block';
+  document.getElementById('payBtn').textContent=`💳 ชำระ ฿${selectedPkg.price} — ${selectedPkg.label}`;
+}
+
+document.getElementById('numInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter')calculate();
+});
+
+function handlePay(){
+  alert('🔒 ระบบชำระเงิน\n\nช่องทาง:\n• PromptPay: 0XX-XXX-XXXX\n• QR Code ธนาคาร\n• บัตรเครดิต/เดบิต\n\nหลังชำระกรุณาส่งสลิปทาง LINE: @huaiai');
+}
+
+function toggleFaq(el){
+  el.classList.toggle('open');
+}
+
+// Animate counter
+function animateNum(id,target){
+  const el=document.getElementById(id);
+  let cur=Math.max(0,target-500);
+  const step=Math.ceil((target-cur)/60);
+  const t=setInterval(()=>{
+    cur=Math.min(cur+step,target);
+    el.textContent=cur.toLocaleString('th-TH');
+    if(cur>=target)clearInterval(t);
+  },16);
+}
+window.addEventListener('load',()=>{
+  animateNum('cnt-users',24819);
+  animateNum('cnt-rounds',358);
+});
+</script>
+</body>
+</html>
